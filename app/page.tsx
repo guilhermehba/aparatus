@@ -12,6 +12,7 @@ import {
   PageSectionTitle,
 } from "@/components/ui/page";
 import Footer from "@/components/footer";
+import QuickSearch from "@/components/quick-search";
 
 // Server Component
 export default async function Home() {
@@ -21,6 +22,7 @@ export default async function Home() {
     <div>
       <Header />
       <PageContainer>
+        <QuickSearch />
         <Image
           src={banner}
           alt="Agende nos melhores com a Aparatus"
