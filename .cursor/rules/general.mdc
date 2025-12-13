@@ -17,6 +17,9 @@ Tecnologias utilizadas:
 - Next.js 16
 - Prisma 7 (veja schema em @prisma/schema.prisma)
 - shadcn/ui
+- Better Auth para autenticação
+
+## Regras
 
 - SEMPRE use shadcn como biblioteca de componentes.
 - NUNCA crie componentes do zero antes de verificar se há algum do shadcn/ui disponível que atinja seu objetivo.

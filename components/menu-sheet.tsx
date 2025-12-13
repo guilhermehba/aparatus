@@ -12,14 +12,10 @@ import {
 } from "./ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { MenuIcon, Home, CalendarDays, LogOut, LogIn } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const isLoggedIn = false;
-
-const user = {
-  name: "Felipe Rocha",
-  email: "felipe@email.com",
-  avatarUrl: "https://github.com/felipemotarocha.png",
-};
 
 const categories = [
   { label: "Cabelo", search: "cabelo" },
@@ -31,6 +27,24 @@ const categories = [
 ];
 
 const MenuSheet = () => {
+  const { data: session } = authClient.useSession();
+  const handleLogin = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+    });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+  };
+  const handleLogout = async () => {
+    const { error } = await authClient.signOut();
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+  };
+  const isLoggedIn = !!session?.user;
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -44,27 +58,29 @@ const MenuSheet = () => {
         </SheetHeader>
 
         <div className="flex flex-col gap-6 py-6">
-
           <div className="flex items-center justify-between px-5">
             {isLoggedIn ? (
               <div className="flex items-center gap-3">
                 <Avatar className="size-12">
-                  <AvatarImage src={user.avatarUrl} alt={user.name} />
+                  <AvatarImage
+                    src={session.user.image ?? ""}
+                    alt={session.user.name}
+                  />
                   <AvatarFallback>
-                    {user.name.charAt(0).toUpperCase()}
+                    {session.user.name.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <span className="font-semibold">{user.name}</span>
+                  <span className="font-semibold">{session.user.name}</span>
                   <span className="text-muted-foreground text-sm">
-                    {user.email}
+                    {session.user.email}
                   </span>
                 </div>
               </div>
             ) : (
               <>
                 <p className="font-semibold">Olá. Faça seu login!</p>
-                <Button className="gap-3 rounded-full">
+                <Button className="gap-3 rounded-full" onClick={handleLogin}>
                   Login
                   <LogIn className="size-4" />
                 </Button>
@@ -110,10 +126,16 @@ const MenuSheet = () => {
 
           <div className="border-border border-b" />
 
-          <Button variant="ghost" className="justify-left w-fit text-left">
-            <LogOut className="size-4" />
-            Sair da conta
-          </Button>
+          {isLoggedIn && (
+            <Button
+              variant="ghost"
+              className="justify-left w-fit text-left"
+              onClick={handleLogout}
+            >
+              <LogOut className="size-4" />
+              Sair da conta
+            </Button>
+          )}
         </div>
       </SheetContent>
     </Sheet>
